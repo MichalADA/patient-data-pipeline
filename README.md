@@ -1,5 +1,11 @@
 # Projekt Bazy Danych Pacjenta - Azure Data Pipeline
 
+## Technologie Wykorzystane 
+Azure , 
+Azure data factory 
+SQL 
+JSON
+
 ## Struktura projektu
 
 Projekt składa się z systemu do zarządzania danymi pacjentów, wykorzystującego różne usługi Azure do przetwarzania i przechowywania danych.
