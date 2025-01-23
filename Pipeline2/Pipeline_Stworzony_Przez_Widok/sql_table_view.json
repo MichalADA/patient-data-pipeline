@@ -1,0 +1,49 @@
+{
+    "name": "AzureSqlTable1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabaseView",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+            {
+                "name": "Patient_ID",
+                "type": "nvarchar"
+            },
+            {
+                "name": "First_Name",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Last_Name",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Date_of_Birth",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Phone_Number",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Pesel",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Visit_History",
+                "type": "nvarchar"
+            },
+            {
+                "name": "Upcoming_Visits",
+                "type": "nvarchar"
+            }
+        ],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "PatientCardView"
+        }
+    }
+}
