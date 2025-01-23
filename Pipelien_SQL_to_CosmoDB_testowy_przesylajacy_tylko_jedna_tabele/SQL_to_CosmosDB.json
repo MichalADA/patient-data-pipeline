@@ -1,0 +1,34 @@
+{
+    "name": "SQL_to_CosmosDB",
+    "properties": {
+        "activities": [
+            {
+                "name": "SQL_to_Cosmos_Transform",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "dataflow1",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2025-01-22T16:46:10Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

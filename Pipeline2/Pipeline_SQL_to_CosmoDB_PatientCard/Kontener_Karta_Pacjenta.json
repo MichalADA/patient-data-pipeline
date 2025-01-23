@@ -1,0 +1,15 @@
+{
+    "name": "CosmosDbNoSqlContainer2",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "CosmosDbNoSQL_Karta_pacjenta",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "CosmosDbSqlApiCollection",
+        "schema": {},
+        "typeProperties": {
+            "collectionName": "Karta-Pacjenta"
+        }
+    }
+}

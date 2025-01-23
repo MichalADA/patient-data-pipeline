@@ -1,0 +1,174 @@
+{
+    "name": "dataflow2",
+    "properties": {
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "Azure_Baza_Danych_Patients",
+                        "type": "DatasetReference"
+                    },
+                    "name": "Patients"
+                },
+                {
+                    "dataset": {
+                        "referenceName": "Azure_Baza_Danych_Doctors",
+                        "type": "DatasetReference"
+                    },
+                    "name": "Doctors"
+                },
+                {
+                    "dataset": {
+                        "referenceName": "Azure_Baza_Danych_Upcoming_Visits",
+                        "type": "DatasetReference"
+                    },
+                    "name": "UpcomigVisit"
+                },
+                {
+                    "dataset": {
+                        "referenceName": "Azure_Baza_Danych_Visit_History",
+                        "type": "DatasetReference"
+                    },
+                    "name": "VisitHistory"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "CosmosDbNoSqlContainer2",
+                        "type": "DatasetReference"
+                    },
+                    "name": "sink1"
+                }
+            ],
+            "transformations": [
+                {
+                    "name": "lookupPatientsVisitHistory"
+                },
+                {
+                    "name": "LookupVisitHistoryDoctors"
+                },
+                {
+                    "name": "LokkupUpcomingDoctors"
+                },
+                {
+                    "name": "aggregate1"
+                },
+                {
+                    "name": "aggregate2"
+                },
+                {
+                    "name": "aggregate3"
+                },
+                {
+                    "name": "join1"
+                },
+                {
+                    "name": "join2"
+                }
+            ],
+            "scriptLines": [
+                "source(output(",
+                "          Patient_ID as string,",
+                "          First_Name as string,",
+                "          Last_Name as string,",
+                "          Date_of_Birth as string,",
+                "          Phone_Number as string,",
+                "          Pesel as string",
+                "     ),",
+                "     allowSchemaDrift: false,",
+                "     validateSchema: true,",
+                "     isolationLevel: 'READ_UNCOMMITTED',",
+                "     format: 'table') ~> Patients",
+                "source(output(",
+                "          Doctor_ID as string,",
+                "          First_Name as string,",
+                "          Last_Name as string,",
+                "          Specialization as string",
+                "     ),",
+                "     allowSchemaDrift: false,",
+                "     validateSchema: true,",
+                "     isolationLevel: 'READ_UNCOMMITTED',",
+                "     format: 'table') ~> Doctors",
+                "source(output(",
+                "          Upcoming_ID as string,",
+                "          Patient_ID as string,",
+                "          Doctor_ID as string,",
+                "          Date as string,",
+                "          Time as string,",
+                "          Notes as string",
+                "     ),",
+                "     allowSchemaDrift: false,",
+                "     validateSchema: true,",
+                "     isolationLevel: 'READ_UNCOMMITTED',",
+                "     format: 'table') ~> UpcomigVisit",
+                "source(output(",
+                "          History_ID as string,",
+                "          Patient_ID as string,",
+                "          Doctor_ID as string,",
+                "          Date as string,",
+                "          Time as string,",
+                "          Diagnosis as string,",
+                "          Treatment as string,",
+                "          Additional_Notes as string",
+                "     ),",
+                "     allowSchemaDrift: false,",
+                "     validateSchema: true,",
+                "     isolationLevel: 'READ_UNCOMMITTED',",
+                "     format: 'table') ~> VisitHistory",
+                "Patients, VisitHistory lookup(Patients@Patient_ID == VisitHistory@Patient_ID,",
+                "     multiple: false,",
+                "     pickup: 'any',",
+                "     broadcast: 'auto')~> lookupPatientsVisitHistory",
+                "VisitHistory, Doctors lookup(VisitHistory@Doctor_ID == Doctors@Doctor_ID,",
+                "     multiple: false,",
+                "     pickup: 'any',",
+                "     broadcast: 'auto')~> LookupVisitHistoryDoctors",
+                "UpcomigVisit, Doctors lookup(UpcomigVisit@Doctor_ID == Doctors@Doctor_ID,",
+                "     multiple: false,",
+                "     pickup: 'any',",
+                "     broadcast: 'auto')~> LokkupUpcomingDoctors",
+                "lookupPatientsVisitHistory aggregate(groupBy(Patients@Patient_ID),",
+                "     First_Name = first(First_Name),",
+                "          Last_Name = first(Last_Name),",
+                "          Date_of_Birth =  first(Date_of_Birth),",
+                "          Phone_Number =  first(Phone_Number),",
+                "          Pesel = first(Pesel)) ~> aggregate1",
+                "LookupVisitHistoryDoctors aggregate(groupBy(Patient_ID),",
+                "     History_ID = collect(History_ID),",
+                "          Date = collect(Date),",
+                "          Time = collect(Time),",
+                "          Doctor_Name = collect(concat(First_Name, ' ', Last_Name, ' (', Specialization, ')')),",
+                "          Diagnosis = collect(Diagnosis),",
+                "          Treatment = collect(Treatment),",
+                "          Additional_Notes = collect(Additional_Notes)) ~> aggregate2",
+                "LokkupUpcomingDoctors aggregate(groupBy(Patient_ID),",
+                "     Upcoming_ID = collect(Upcoming_ID),",
+                "          Upcoming_Date = collect(Date),",
+                "          Upcoming_Time = collect(Time),",
+                "          Doctor = collect(concat(First_Name, ' ', Last_Name, ' (', Specialization, ')')),",
+                "          Notes = collect(Notes)) ~> aggregate3",
+                "join2, aggregate2 join(aggregate1@Patient_ID == aggregate2@Patient_ID,",
+                "     joinType:'outer',",
+                "     matchType:'exact',",
+                "     ignoreSpaces: false,",
+                "     broadcast: 'auto')~> join1",
+                "aggregate1, aggregate3 join(aggregate1@Patient_ID == aggregate3@Patient_ID,",
+                "     joinType:'outer',",
+                "     matchType:'exact',",
+                "     ignoreSpaces: false,",
+                "     broadcast: 'auto')~> join2",
+                "join1 sink(allowSchemaDrift: true,",
+                "     validateSchema: false,",
+                "     deletable:false,",
+                "     insertable:true,",
+                "     updateable:false,",
+                "     upsertable:false,",
+                "     format: 'document',",
+                "     skipDuplicateMapInputs: true,",
+                "     skipDuplicateMapOutputs: true) ~> sink1"
+            ]
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "SQL_Visit_History",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": "",
+            "table": "Visit_History"
+        }
+    }
+}

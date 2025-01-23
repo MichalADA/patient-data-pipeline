@@ -1,0 +1,16 @@
+{
+    "name": "SQL_UPCOMIG_VISIT",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": "",
+            "table": "Upcoming_Visits"
+        }
+    }
+}

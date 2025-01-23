@@ -1,0 +1,46 @@
+{
+    "name": "Excel_COurce_Upcoming_Visit",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureBlobStorage1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Excel",
+        "typeProperties": {
+            "sheetName": "Upcoming_Visits",
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "Baza_Danych_Pacjenta.xlsx",
+                "container": "data"
+            },
+            "firstRowAsHeader": true
+        },
+        "schema": [
+            {
+                "name": "Patient_ID",
+                "type": "String"
+            },
+            {
+                "name": "First_Name",
+                "type": "String"
+            },
+            {
+                "name": "Last_Name",
+                "type": "String"
+            },
+            {
+                "name": "Date_of_Birth",
+                "type": "String"
+            },
+            {
+                "name": "Phone_Number",
+                "type": "String"
+            },
+            {
+                "name": "Pesel",
+                "type": "String"
+            }
+        ]
+    }
+}
